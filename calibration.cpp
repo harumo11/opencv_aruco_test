@@ -11,6 +11,12 @@
 
 int main(int argc, char const* argv[])
 {
+	cv::Size conner_size(10,7);	//	チェスボードの内角コーナーの数(必要があれば変更)
+	const int square_side_length = 19;	//	チェスボード上の正方形の一辺の長さ(必要があれば変更)
+	std::cout << "width conner size : " << conner_size.width << std::endl;
+	std::cout << "height conner size: " << conner_size.height << std::endl;
+	std::cout << "side length of square on chessboard" << square_side_length << " mm" << std::endl;
+
 	cv::VideoCapture cap(0);	//カメラを開く
 	cv::Mat frame;				//作業用フレーム
 	std::vector<cv::Point2f> corners;	//1枚分のチェスボードのコーナー座標
@@ -21,8 +27,8 @@ int main(int argc, char const* argv[])
 		cap >> frame;
 		cv::imshow("camera", frame);	//通常のカメラ
 		cv::waitKey(10);
-		if (cv::findChessboardCorners(frame, cv::Size(10,7), corners)) {
-			cv::drawChessboardCorners(frame, cv::Size(10,7), corners, true);
+		if (cv::findChessboardCorners(frame, conner_size, corners)) {
+			cv::drawChessboardCorners(frame, conner_size, corners, true);
 			cv::imshow("chess board", frame);	//チェスボードのコーナーを描画
 			//適当なキーを押すとその画像を保存
 			if (cv::waitKey(1) > 0) {
@@ -56,9 +62,9 @@ int main(int argc, char const* argv[])
 	std::vector<std::vector<cv::Point3f>> worldPoints;
 	//1毎分のworldPointsを作成する
 	std::vector<cv::Point3f> point;
-	for (int i = 0; i < 6; i++) {
-		for (int j = 0; j < 9; j++) {
-			point.push_back(cv::Point3f((j+1)*24, (i+1)*24, 0.0));
+	for (int i = 0; i < conner_size.height; i++) {
+		for (int j = 0; j < conner_size.width; j++) {
+			point.push_back(cv::Point3f((j+1)*square_side_length, (i+1)*square_side_length, 0.0));
 		}
 	}
 	//15毎分のworldPointsを作成する
@@ -71,8 +77,8 @@ int main(int argc, char const* argv[])
 	std::vector<cv::Mat> rvec, tvec;	//rotation vector, translation vector
 	
 	double rms = cv::calibrateCamera(worldPoints, imagePoints, frame.size(), cameraMatrix, distCoeffs, rvec, tvec);
-	std::cout << cameraMatrix << std::endl;	//カメラ内部行列を確認のため表示
-	std::cout << rms << std::endl;	//root mean square誤差を表示
+	std::cout << "camera matrix " << std::endl << cameraMatrix << std::endl;	//カメラ内部行列を確認のため表示
+	std::cout << "root mean square error " << rms << std::endl;	//root mean square誤差を表示
 
 
 	//保存する
@@ -80,6 +86,7 @@ int main(int argc, char const* argv[])
 	if (fswrite.isOpened()) {
 		cv::write(fswrite, "intrinsic", cameraMatrix);
 		cv::write(fswrite, "distortion", distCoeffs);
+		std::cout << "calibration files are saved" << std::endl;
 	}
 
 	//歪み補正画像を作成
@@ -87,6 +94,7 @@ int main(int argc, char const* argv[])
 	cv::undistort(frame, undistorted, cameraMatrix, distCoeffs);
 	cv::imshow("src", frame);
 	cv::imshow("und", undistorted);
+	std::cout << "press key to exit" << std::endl;
 	cv::waitKey(0);
 	return 0;
 }
