@@ -20,9 +20,9 @@ int main(int argc, char const* argv[])
 	while (true) {
 		cap >> frame;
 		cv::imshow("camera", frame);	//通常のカメラ
-		cv::waitKey(1);
-		if (cv::findChessboardCorners(frame, cv::Size(9,6), corners)) {
-			cv::drawChessboardCorners(frame, cv::Size(9,6), corners, true);
+		cv::waitKey(10);
+		if (cv::findChessboardCorners(frame, cv::Size(10,7), corners)) {
+			cv::drawChessboardCorners(frame, cv::Size(10,7), corners, true);
 			cv::imshow("chess board", frame);	//チェスボードのコーナーを描画
 			//適当なキーを押すとその画像を保存
 			if (cv::waitKey(1) > 0) {
