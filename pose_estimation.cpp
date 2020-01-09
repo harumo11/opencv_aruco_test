@@ -7,7 +7,7 @@
 int main(int argc, char const* argv[])
 {
 	//キャリブレーション情報を読み込む
-	cv::FileStorage fs("params", cv::FileStorage::READ);
+	cv::FileStorage fs("params.yml", cv::FileStorage::READ);
 	if (!fs.isOpened()) {
 		std::cout << "File does not opened" << std::endl;
 	}

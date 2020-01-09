@@ -21,6 +21,7 @@ int main(int argc, char const* argv[])
 	cv::Mat frame;				//作業用フレーム
 	std::vector<cv::Point2f> corners;	//1枚分のチェスボードのコーナー座標
 	std::vector<std::vector<cv::Point2f>> imagePoints;//全てのチェスボードのコーナー座標
+	const int number_of_picture = 20;
 
 	//チェスボードのコーナー検出
 	while (true) {
@@ -32,7 +33,7 @@ int main(int argc, char const* argv[])
 			cv::imshow("chess board", frame);	//チェスボードのコーナーを描画
 			//適当なキーを押すとその画像を保存
 			if (cv::waitKey(1) > 0) {
-				if (imagePoints.size() < 15) {
+				if (imagePoints.size() < number_of_picture) {
 					imagePoints.push_back(corners);
 					std::cout << "coners are saved" << std::endl;
 				}
@@ -67,8 +68,8 @@ int main(int argc, char const* argv[])
 			point.push_back(cv::Point3f((j+1)*square_side_length, (i+1)*square_side_length, 0.0));
 		}
 	}
-	//15毎分のworldPointsを作成する
-	for (int i = 0; i < 15; i++) {
+	//20毎分のworldPointsを作成する
+	for (int i = 0; i < number_of_picture; i++) {
 		worldPoints.push_back(point);
 	}
 
@@ -82,7 +83,7 @@ int main(int argc, char const* argv[])
 
 
 	//保存する
-	cv::FileStorage fswrite("params", cv::FileStorage::WRITE);
+	cv::FileStorage fswrite("params.yml", cv::FileStorage::WRITE);
 	if (fswrite.isOpened()) {
 		cv::write(fswrite, "intrinsic", cameraMatrix);
 		cv::write(fswrite, "distortion", distCoeffs);

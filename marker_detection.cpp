@@ -30,7 +30,7 @@ int main(int argc, char const* argv[])
 
 		//結果を表示する
 		cv::imshow("out", imageCopy);
-		if (cv::waitKey(30)>0) {
+		if (cv::waitKey(1)>0) {
 			std::exit(0);
 		}
 	}
